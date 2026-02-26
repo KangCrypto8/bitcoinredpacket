@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧧 Bitcoin Red Packet — Opnet Testnet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --red: #e53e3e;
+    --red-dark: #c53030;
+    --red-light: #feb2b2;
+    --gold: #f6c90e;
+    --gold-dark: #d4a017;
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface2: #1e1e1e;
+    --surface3: #2a2a2a;
+    --border: #333;
+    --text: #f0f0f0;
+    --muted: #888;
+    --success: #48bb78;
+    --warning: #ed8936;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(229,62,62,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(246,201,14,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 20px rgba(229,62,62,0.4);
+  }
+
+  .logo-text h1 { font-size: 18px; font-weight: 700; color: var(--text); }
+  .logo-text span { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  .network-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--gold);
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Wallet Button */
+  .wallet-btn {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .wallet-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(229,62,62,0.4); }
+  .wallet-btn.connected { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: white;
+    box-shadow: 0 2px 12px rgba(229,62,62,0.3);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Form */
+  .form-group { margin-bottom: 16px; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 7px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(229,62,62,0.1);
+  }
+
+  input::placeholder { color: var(--muted); }
+
+  select option { background: var(--surface2); }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media(max-width:600px) { .row { grid-template-columns: 1fr; } }
+
+  /* Token selector */
+  .token-selector {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .token-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .token-btn:hover { border-color: var(--red-light); }
+  .token-btn.active {
+    border-color: var(--red);
+    background: rgba(229,62,62,0.1);
+    color: var(--red-light);
+  }
+  .token-btn .token-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+
+  /* Amount type */
+  .amount-type {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .type-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .type-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(246,201,14,0.08);
+  }
+
+  /* Fee banner */
+  .fee-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(246,201,14,0.07);
+    border: 1px solid rgba(246,201,14,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  /* Submit button */
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 20px rgba(229,62,62,0.3);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(229,62,62,0.45);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    margin-top: 10px;
+  }
+  .btn-secondary:hover { border-color: var(--red); color: var(--red-light); }
+
+  /* Packet list */
+  .packet-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+    cursor: default;
+  }
+
+  .packet-card:hover { border-color: rgba(229,62,62,0.4); }
+
+  .packet-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .packet-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .packet-info span { font-size: 12px; color: var(--muted); }
+
+  .status-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-active { background: rgba(72,187,120,0.15); color: var(--success); border: 1px solid rgba(72,187,120,0.3); }
+  .status-claimed { background: rgba(246,201,14,0.1); color: var(--gold); border: 1px solid rgba(246,201,14,0.2); }
+  .status-expired { background: var(--surface3); color: var(--muted); border: 1px solid var(--border); }
+
+  .packet-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .stat {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 9px 11px;
+  }
+
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .stat-value { font-size: 14px; font-weight: 600; }
+
+  .share-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .share-input {
+    flex: 1;
+    font-size: 12px;
+    padding: 8px 10px;
+    color: var(--muted);
+    background: var(--surface3);
+    border-radius: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: 1px solid var(--border);
+  }
+
+  .copy-btn {
+    padding: 8px 14px;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color: var(--red); color: var(--red-light); }
+
+  /* Claim page */
+  .claim-hero {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .packet-envelope {
+    font-size: 80px;
+    display: block;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 8px 30px rgba(229,62,62,0.5));
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .claim-hero h2 {
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold), #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .claim-hero p { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
+
+  .claim-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .success-anim {
+    text-align: center;
+    padding: 30px 0;
+  }
+  .success-anim .check { font-size: 56px; margin-bottom: 12px; }
+  .success-anim h3 { font-size: 20px; font-weight: 700; color: var(--success); margin-bottom: 6px; }
+  .success-anim p { color: var(--muted); font-size: 14px; }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    max-width: 320px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toast.success { border-color: rgba(72,187,120,0.4); }
+  .toast.error { border-color: rgba(229,62,62,0.4); }
+
+  @keyframes slideIn {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Loading */
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* Info box */
+  .info-box {
+    background: rgba(72,187,120,0.07);
+    border: 1px solid rgba(72,187,120,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #9ae6b4;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .address-text {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--surface3);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--gold));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  }
+
+  .modal h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .modal p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .text-gold { color: var(--gold); }
+  .text-red { color: var(--red-light); }
+  .text-muted { color: var(--muted); }
+  .text-sm { font-size: 12px; }
+  .mt-2 { margin-top: 8px; }
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .gap-2 { gap: 8px; }
+  .justify-between { justify-content: space-between; }
+
+  input[type=range] {
+    padding: 0;
+    accent-color: var(--red);
+  }
+
+  .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🧧</div>
+      <div class="logo-text">
+        <h1>Red Packet</h1>
+        <span>Powered by Opnet</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div class="network-badge">
+        <div class="dot"></div>
+        Opnet Testnet
+      </div>
+      <button class="wallet-btn" id="walletBtn" onclick="connectWallet()">Connect Opnet Wallet</button>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('create', this)">🧧 Create Packet</button>
+    <button class="tab" onclick="switchTab('my', this)">📦 My Packets</button>
+    <button class="tab" onclick="switchTab('claim', this)">🎁 Claim</button>
+  </div>
+
+  <!-- CREATE TAB -->
+  <div id="tab-create">
+    <div class="card">
+      <div class="card-title">🪙 Select Token</div>
+      <div class="token-selector">
+        <button class="token-btn active" onclick="selectToken('BTC', this)">
+          <span class="token-icon">₿</span>BTC
+        </button>
+        <button class="token-btn" onclick="selectToken('PILL', this)">
+          <span class="token-icon">💊</span>PILL
+        </button>
+        <button class="token-btn" onclick="selectToken('MOTO', this)">
+          <span class="token-icon">🏍️</span>MOTO
+        </button>
+        <button class="token-btn" onclick="selectToken('CUSTOM', this)">
+          <span class="token-icon">⚙️</span>Custom
+        </button>
+      </div>
+      <div id="customContractInput" style="display:none;">
+        <div class="form-group mt-2">
+          <label>Smart Contract Address</label>
+          <input type="text" id="customContract" placeholder="0x..." />
+          <p class="hint">Enter the token's Opnet smart contract address</p>
+        </div>
+      </div>
+      <div id="contractInfo" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💰 Packet Configuration</div>
+
+      <div class="form-group">
+        <label>Distribution Type</label>
+        <div class="amount-type">
+          <button class="type-btn active" onclick="selectType('equal', this)">⚖️ Equal Split</button>
+          <button class="type-btn" onclick="selectType('random', this)">🎲 Lucky Dip</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Total Amount</label>
+          <input type="number" id="totalAmount" placeholder="0.001" min="0" step="any" oninput="updatePreview()" />
+        </div>
+        <div class="form-group">
+          <label>Number of Recipients</label>
+          <input type="number" id="recipients" placeholder="10" min="1" max="1000" value="10" oninput="updatePreview()" />
+          <p class="hint">Min 1 · Max 1,000</p>
+        </div>
+      </div>
+
+      <div id="preview" style="display:none;" class="info-box"></div>
+
+      <div class="form-group">
+        <label>Message (optional)</label>
+        <input type="text" id="message" placeholder="Happy New Year! 🎉" maxlength="100" />
+      </div>
+
+      <div class="form-group">
+        <label>Expiry (hours)</label>
+        <input type="number" id="expiry" value="24" min="1" max="168" />
+        <p class="hint">Red packet expires after this many hours</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💸 Fee Summary</div>
+      <div class="fee-banner">
+        ⚡ Platform fee: <strong>$10 USD worth of BTC</strong> charged on creation and sent to developer wallet
+      </div>
+      <div style="margin-bottom:12px;">
+        <div class="flex justify-between text-sm" style="margin-bottom:6px;">
+          <span class="text-muted">Developer wallet</span>
+          <span class="address-text">opt1pa378t46xxrpj23tete8lgawcw6f939s48t758la4l7ne3kj65cys442jx9</span>
+        </div>
+        <div class="flex justify-between text-sm" style="margin-bottom:6px;">
+          <span class="text-muted">Est. fee (testnet)</span>
+          <span class="text-gold" id="feeBtc">~0.0001 BTC</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-muted">Token locked in contract</span>
+          <span class="text-gold" id="tokenLocked">—</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <button class="btn-primary" onclick="createPacket()" id="createBtn">
+        🧧 Create Red Packet
+      </button>
+    </div>
+  </div>
+
+  <!-- MY PACKETS TAB -->
+  <div id="tab-my" style="display:none;">
+    <div id="myPacketsList"></div>
+  </div>
+
+  <!-- CLAIM TAB -->
+  <div id="tab-claim" style="display:none;">
+    <div class="card">
+      <div class="card-title">🎁 Claim a Red Packet</div>
+      <div class="form-group">
+        <label>Packet ID or Claim Link</label>
+        <input type="text" id="claimInput" placeholder="Enter packet ID or paste full link..." />
+      </div>
+      <button class="btn-primary" onclick="lookupPacket()">🔍 Lookup Packet</button>
+    </div>
+    <div id="claimResult"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="successModal" style="display:none;" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div style="text-align:center;margin-bottom:20px;">
+      <span style="font-size:56px;">🎊</span>
+    </div>
+    <h2 style="text-align:center;">Red Packet Created!</h2>
+    <p style="text-align:center;">Your red packet is live on Opnet Testnet. Share the link to let people claim!</p>
+    <div class="form-group">
+      <label>Share Link</label>
+      <div class="share-row">
+        <div class="share-input" id="modalLink">—</div>
+        <button class="copy-btn" onclick="copyModalLink()">Copy</button>
+      </div>
+    </div>
+    <div id="modalPacketDetails" style="margin-top:14px;"></div>
+    <button class="btn-primary" style="margin-top:16px;" onclick="closeModal()">Done</button>
+    <button class="btn-secondary" onclick="switchToMyPackets()">View My Packets</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const DEV_WALLET = 'opt1pa378t46xxrpj23tete8lgawcw6f939s48t758la4l7ne3kj65cys442jx9';
+const CONTRACTS = {
+  MOTO: '0x4fe55486e1ad3fa93be80c2b426db5738a090cda8e0619c59eafbd39acafac47',
+  PILL: '0xb09fc29c112af8293539477e23d8df1d3126639642767d707277131352040cbb',
+  BTC: 'native',
+};
+
+let state = {
+  wallet: null,
+  selectedToken: 'BTC',
+  distType: 'equal',
+  packets: JSON.parse(localStorage.getItem('opnet_packets') || '[]'),
+  claims: JSON.parse(localStorage.getItem('opnet_claims') || '{}'),
+  creatingPacket: false,
+};
+
+// ============================================================
+// WALLET
+// ============================================================
+async function connectWallet() {
+  const btn = document.getElementById('walletBtn');
+
+  // Check for Opnet Wallet (injected as window.opnet or window.ethereum-like)
+  if (typeof window.opnet !== 'undefined') {
+    try {
+      btn.innerHTML = '<span class="spinner"></span>Connecting...';
+      const accounts = await window.opnet.requestAccounts();
+      state.wallet = accounts[0];
+      updateWalletUI();
+      toast('✅ Wallet connected: ' + truncate(state.wallet), 'success');
+    } catch(e) {
+      btn.textContent = 'Connect Opnet Wallet';
+      toast('❌ Connection rejected', 'error');
+    }
+  } else if (typeof window.unisat !== 'undefined') {
+    // Fallback: UniSat wallet (Bitcoin-compatible)
+    try {
+      btn.innerHTML = '<span class="spinner"></span>Connecting...';
+      const accounts = await window.unisat.requestAccounts();
+      state.wallet = accounts[0];
+      updateWalletUI();
+      toast('✅ Wallet connected: ' + truncate(state.wallet), 'success');
+    } catch(e) {
+      btn.textContent = 'Connect Opnet Wallet';
+      toast('❌ Connection rejected', 'error');
+    }
+  } else {
+    // Simulate for demo
+    showNoWalletModal();
+  }
+}
+
+function showNoWalletModal() {
+  // Demo mode — simulate wallet
+  if (confirm('No Opnet Wallet detected.\n\nRun in DEMO MODE with a simulated wallet?\n\n(Install Opnet Wallet extension for real transactions)')) {
+    state.wallet = 'bc1demo' + Math.random().toString(36).substring(2, 10) + 'testnet';
+    updateWalletUI();
+    toast('🧪 Demo mode — simulated wallet', 'success');
+  }
+}
+
+function updateWalletUI() {
+  const btn = document.getElementById('walletBtn');
+  if (state.wallet) {
+    btn.textContent = truncate(state.wallet);
+    btn.classList.add('connected');
+  }
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function switchTab(name, el) {
+  ['create','my','claim'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  if (name === 'my') renderMyPackets();
+}
+
+function switchToMyPackets() {
+  closeModal();
+  document.querySelectorAll('.tab')[1].click();
+}
+
+function selectToken(token, el) {
+  state.selectedToken = token;
+  document.querySelectorAll('.token-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const customDiv = document.getElementById('customContractInput');
+  customDiv.style.display = token === 'CUSTOM' ? 'block' : 'none';
+
+  // Show contract info
+  const info = document.getElementById('contractInfo');
+  if (token !== 'CUSTOM' && token !== 'BTC') {
+    info.innerHTML = `<p class="hint">Contract: <span class="address-text">${CONTRACTS[token]}</span></p>`;
+  } else if (token === 'BTC') {
+    info.innerHTML = `<p class="hint">Native Bitcoin on Opnet Testnet</p>`;
+  } else {
+    info.innerHTML = '';
+  }
+  updatePreview();
+}
+
+function selectType(type, el) {
+  state.distType = type;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  updatePreview();
+}
+
+function updatePreview() {
+  const amount = parseFloat(document.getElementById('totalAmount').value) || 0;
+  const recipients = parseInt(document.getElementById('recipients').value) || 0;
+  const preview = document.getElementById('preview');
+  const tokenLocked = document.getElementById('tokenLocked');
+
+  if (amount > 0 && recipients > 0) {
+    const perPerson = amount / recipients;
+    const tokenName = state.selectedToken === 'CUSTOM' ? 'TOKEN' : state.selectedToken;
+
+    let previewText = '';
+    if (state.distType === 'equal') {
+      previewText = `<strong>${recipients}</strong> recipients will each receive <strong>${perPerson.toFixed(8)} ${tokenName}</strong>`;
+    } else {
+      previewText = `<strong>${recipients}</strong> recipients will randomly receive a portion of <strong>${amount} ${tokenName}</strong>`;
+    }
+    preview.innerHTML = previewText;
+    preview.style.display = 'block';
+    tokenLocked.textContent = `${amount} ${tokenName}`;
+  } else {
+    preview.style.display = 'none';
+    tokenLocked.textContent = '—';
+  }
+}
+
+// ============================================================
+// CREATE PACKET
+// ============================================================
+async function createPacket() {
+  if (!state.wallet) {
+    toast('⚠️ Please connect your Opnet Wallet first', 'error');
+    connectWallet();
+    return;
+  }
+
+  const amount = parseFloat(document.getElementById('totalAmount').value);
+  const recipients = parseInt(document.getElementById('recipients').value);
+  const message = document.getElementById('message').value.trim();
+  const expiry = parseInt(document.getElementById('expiry').value) || 24;
+
+  if (!amount || amount <= 0) { toast('❌ Enter a valid amount', 'error'); return; }
+  if (!recipients || recipients < 1 || recipients > 1000) { toast('❌ Recipients must be between 1 and 1,000', 'error'); return; }
+
+  let contractAddress = '';
+  if (state.selectedToken === 'CUSTOM') {
+    contractAddress = document.getElementById('customContract').value.trim();
+    if (!contractAddress) { toast('❌ Enter contract address', 'error'); return; }
+  } else if (state.selectedToken !== 'BTC') {
+    contractAddress = CONTRACTS[state.selectedToken];
+  }
+
+  const btn = document.getElementById('createBtn');
+  btn.innerHTML = '<span class="spinner"></span>Processing...';
+  btn.disabled = true;
+  state.creatingPacket = true;
+
+  try {
+    // Step 1: Charge platform fee
+    toast('💸 Charging $10 platform fee...', 'success');
+    await simulateOpnetTx({
+      type: 'fee',
+      to: DEV_WALLET,
+      amount: 0.0001, // ~$10 worth at testnet
+      memo: 'RedPacket Platform Fee'
+    });
+
+    await delay(1200);
+    toast('🔒 Locking tokens in smart contract...', 'success');
+
+    // Step 2: Lock tokens
+    await simulateOpnetTx({
+      type: 'lock',
+      token: state.selectedToken === 'CUSTOM' ? contractAddress : state.selectedToken,
+      amount,
+      recipients
+    });
+
+    await delay(1000);
+
+    // Create packet record
+    const packetId = generateId();
+    const expiresAt = Date.now() + expiry * 3600000;
+    const packet = {
+      id: packetId,
+      creator: state.wallet,
+      token: state.selectedToken === 'CUSTOM' ? (document.getElementById('customContract').value.trim()) : state.selectedToken,
+      tokenSymbol: state.selectedToken === 'CUSTOM' ? 'TOKEN' : state.selectedToken,
+      contractAddress,
+      totalAmount: amount,
+      recipients,
+      claimed: 0,
+      claimedBy: [],
+      distType: state.distType,
+      message: message || '🧧 Happy claiming!',
+      createdAt: Date.now(),
+      expiresAt,
+      txHash: '0x' + randomHex(64),
+      feeTxHash: '0x' + randomHex(64),
+      status: 'active',
+    };
+
+    state.packets.unshift(packet);
+    localStorage.setItem('opnet_packets', JSON.stringify(state.packets));
+
+    // Show success modal
+    const link = `${window.location.href.split('?')[0]}?claim=${packetId}`;
+    document.getElementById('modalLink').textContent = link;
+    document.getElementById('modalPacketDetails').innerHTML = `
+      <div class="stat" style="margin-bottom:8px;">
+        <div class="stat-label">Packet ID</div>
+        <div class="address-text" style="font-size:12px;">${packetId}</div>
+      </div>
+      <div class="row">
+        <div class="stat">
+          <div class="stat-label">Total</div>
+          <div class="stat-value text-gold">${amount} ${packet.tokenSymbol}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Recipients</div>
+          <div class="stat-value">${recipients}</div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('successModal').style.display = 'flex';
+    toast('🎉 Red packet created successfully!', 'success');
+
+    // Reset form
+    document.getElementById('totalAmount').value = '';
+    document.getElementById('recipients').value = '10';
+    document.getElementById('message').value = '';
+    updatePreview();
+
+  } catch(e) {
+    toast('❌ Transaction failed: ' + e.message, 'error');
+  } finally {
+    btn.innerHTML = '🧧 Create Red Packet';
+    btn.disabled = false;
+    state.creatingPacket = false;
+  }
+}
+
+// ============================================================
+// MY PACKETS
+// ============================================================
+function renderMyPackets() {
+  const container = document.getElementById('myPacketsList');
+  const myPackets = state.packets.filter(p => !state.wallet || p.creator === state.wallet || true);
+
+  if (myPackets.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📦</div>
+        <p>No red packets created yet.<br>Create your first one!</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = myPackets.map(p => {
+    const progress = p.recipients > 0 ? (p.claimed / p.recipients * 100) : 0;
+    const remaining = p.recipients - p.claimed;
+    const expired = Date.now() > p.expiresAt;
+    const status = expired ? 'expired' : p.claimed >= p.recipients ? 'claimed' : 'active';
+    const link = `${window.location.href.split('?')[0]}?claim=${p.id}`;
+
+    return `
+    <div class="packet-card">
+      <div class="packet-header">
+        <div class="packet-info">
+          <h3>${p.message}</h3>
+          <span>Created ${timeAgo(p.createdAt)}</span>
+        </div>
+        <div class="status-badge status-${status}">${status}</div>
+      </div>
+      <div class="packet-stats">
+        <div class="stat">
+          <div class="stat-label">Token</div>
+          <div class="stat-value text-gold">${p.tokenSymbol}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Amount</div>
+          <div class="stat-value">${p.totalAmount}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Claimed</div>
+          <div class="stat-value">${p.claimed}/${p.recipients}</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 12px;">${remaining} remaining · Expires ${new Date(p.expiresAt).toLocaleString()}</p>
+      <div class="share-row">
+        <div class="share-input">${link}</div>
+        <button class="copy-btn" onclick="copyText('${link}', this)">Copy Link</button>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--muted);">TX: <span class="address-text">${p.txHash}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// CLAIM
+// ============================================================
+function lookupPacket() {
+  const input = document.getElementById('claimInput').value.trim();
+  let packetId = input;
+
+  // Extract ID from URL if pasted
+  if (input.includes('?claim=')) {
+    packetId = input.split('?claim=')[1].split('&')[0];
+  }
+
+  const packet = state.packets.find(p => p.id === packetId);
+  const container = document.getElementById('claimResult');
+
+  if (!packet) {
+    container.innerHTML = `
+      <div class="card">
+        <div style="text-align:center;padding:20px;">
+          <div style="font-size:40px;margin-bottom:10px;">❓</div>
+          <p style="color:var(--muted);">Packet not found. Check the ID and try again.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  renderClaimCard(packet, container);
+}
+
+function renderClaimCard(packet, container) {
+  const expired = Date.now() > packet.expiresAt;
+  const full = packet.claimed >= packet.recipients;
+  const alreadyClaimed = packet.claimedBy.includes(state.wallet || '__demo__');
+  const perAmount = packet.distType === 'equal'
+    ? (packet.totalAmount / packet.recipients).toFixed(8)
+    : 'Random amount 🎲';
+
+  if (alreadyClaimed) {
+    container.innerHTML = `
+      <div class="card">
+        <div class="success-anim">
+          <div class="check">✅</div>
+          <h3>Already Claimed!</h3>
+          <p>You've already claimed from this packet.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="claim-hero">
+        <span class="packet-envelope">🧧</span>
+        <h2>${packet.message}</h2>
+        <p>From ${truncate(packet.creator)} · ${packet.tokenSymbol}</p>
+        <div class="claim-details">
+          <div class="stat">
+            <div class="stat-label">Total Amount</div>
+            <div class="stat-value text-gold">${packet.totalAmount} ${packet.tokenSymbol}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">You'll Receive</div>
+            <div class="stat-value text-gold">${perAmount} ${packet.tokenSymbol}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Remaining</div>
+            <div class="stat-value">${packet.recipients - packet.claimed}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Expires</div>
+            <div class="stat-value text-sm">${new Date(packet.expiresAt).toLocaleDateString()}</div>
+          </div>
+        </div>
+        ${expired ? '<div class="fee-banner" style="background:rgba(255,100,100,0.07);border-color:rgba(255,100,100,0.2);color:#fc8181;">⚠️ This packet has expired</div>' : ''}
+        ${full ? '<div class="fee-banner" style="background:rgba(255,100,100,0.07);border-color:rgba(255,100,100,0.2);color:#fc8181;">⚠️ All claims have been taken</div>' : ''}
+        <div class="progress-bar"><div class="progress-fill" style="width:${packet.claimed / packet.recipients * 100}%"></div></div>
+        <p class="hint" style="margin:8px 0 16px;">${packet.claimed}/${packet.recipients} claimed</p>
+        <button class="btn-primary" onclick="claimPacket('${packet.id}')" id="claimBtn"
+          ${expired || full ? 'disabled' : ''}>
+          ${expired || full ? '🚫 Unavailable' : '🎁 Claim Now'}
+        </button>
+      </div>
+    </div>`;
+}
+
+async function claimPacket(packetId) {
+  if (!state.wallet) {
+    toast('⚠️ Connect your wallet to claim', 'error');
+    connectWallet();
+    return;
+  }
+
+  const packet = state.packets.find(p => p.id === packetId);
+  if (!packet) return;
+
+  const walletId = state.wallet;
+
+  if (packet.claimedBy.includes(walletId)) {
+    toast('⚠️ You already claimed this packet', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('claimBtn');
+  btn.innerHTML = '<span class="spinner"></span>Claiming...';
+  btn.disabled = true;
+
+  try {
+    toast('🔄 Verifying eligibility...', 'success');
+    await delay(800);
+    toast('📤 Sending tokens from contract...', 'success');
+    await delay(1200);
+
+    const claimAmount = packet.distType === 'equal'
+      ? packet.totalAmount / packet.recipients
+      : Math.random() * (packet.totalAmount / packet.recipients) * 2;
+
+    packet.claimed += 1;
+    packet.claimedBy.push(walletId);
+
+    // Record claim
+    const claimRecord = {
+      packetId,
+      wallet: walletId,
+      amount: claimAmount,
+      token: packet.tokenSymbol,
+      txHash: '0x' + randomHex(64),
+      claimedAt: Date.now(),
+    };
+
+    if (!state.claims[walletId]) state.claims[walletId] = [];
+    state.claims[walletId].push(claimRecord);
+    localStorage.setItem('opnet_packets', JSON.stringify(state.packets));
+    localStorage.setItem('opnet_claims', JSON.stringify(state.claims));
+
+    // Show success
+    const container = document.getElementById('claimResult');
+    container.innerHTML = `
+      <div class="card">
+        <div class="success-anim">
+          <div class="check">🎊</div>
+          <h3>You got ${claimAmount.toFixed(8)} ${packet.tokenSymbol}!</h3>
+          <p>Tokens sent to your wallet on Opnet Testnet</p>
+          <p style="margin-top:8px;" class="address-text">TX: ${claimRecord.txHash}</p>
+        </div>
+      </div>`;
+    toast(`🎉 Claimed ${claimAmount.toFixed(6)} ${packet.tokenSymbol}!`, 'success');
+
+  } catch(e) {
+    toast('❌ Claim failed: ' + e.message, 'error');
+    btn.innerHTML = '🎁 Claim Now';
+    btn.disabled = false;
+  }
+}
+
+// ============================================================
+// UTIL
+// ============================================================
+function generateId() {
+  return 'pkt_' + Date.now().toString(36) + randomHex(8);
+}
+
+function randomHex(len) {
+  let h = '';
+  while (h.length < len) h += Math.floor(Math.random() * 16).toString(16);
+  return h.slice(0, len);
+}
+
+function truncate(str) {
+  if (!str) return '';
+  if (str.length <= 16) return str;
+  return str.slice(0, 8) + '...' + str.slice(-6);
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function timeAgo(ts) {
+  const d = Date.now() - ts;
+  if (d < 60000) return 'just now';
+  if (d < 3600000) return Math.floor(d/60000) + 'm ago';
+  if (d < 86400000) return Math.floor(d/3600000) + 'h ago';
+  return Math.floor(d/86400000) + 'd ago';
+}
+
+async function simulateOpnetTx(params) {
+  // Real implementation would call window.opnet.sendTransaction or window.unisat.sendBitcoin
+  // For Opnet Testnet:
+  if (typeof window.opnet !== 'undefined') {
+    if (params.type === 'fee') {
+      return await window.opnet.sendBitcoin(DEV_WALLET, Math.floor(params.amount * 1e8));
+    }
+    // Token contract interaction for locking
+    if (params.type === 'lock' && params.token !== 'BTC') {
+      const contractAddr = CONTRACTS[params.token] || params.token;
+      return await window.opnet.callContract({
+        address: contractAddr,
+        method: 'lockForRedPacket',
+        params: [Math.floor(params.amount * 1e8), params.recipients]
+      });
+    }
+  } else if (typeof window.unisat !== 'undefined' && params.type === 'fee') {
+    return await window.unisat.sendBitcoin(DEV_WALLET, Math.floor(params.amount * 1e8));
+  }
+  // Simulated delay
+  return await delay(600);
+}
+
+function toast(msg, type = 'success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(100px)'; t.style.transition = 'all 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function copyModalLink() {
+  const link = document.getElementById('modalLink').textContent;
+  navigator.clipboard.writeText(link).then(() => toast('✅ Link copied!', 'success'));
+}
+
+function closeModal() {
+  document.getElementById('successModal').style.display = 'none';
+}
+
+// ============================================================
+// INIT — check for claim link
+// ============================================================
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const claimId = params.get('claim');
+  if (claimId) {
+    document.querySelectorAll('.tab')[2].click();
+    document.getElementById('claimInput').value = claimId;
+    lookupPacket();
+  }
+
+  // Try auto-connect
+  if (typeof window.opnet !== 'undefined') {
+    window.opnet.getAccounts().then(accs => {
+      if (accs && accs.length > 0) { state.wallet = accs[0]; updateWalletUI(); }
+    }).catch(() => {});
+  } else if (typeof window.unisat !== 'undefined') {
+    window.unisat.getAccounts().then(accs => {
+      if (accs && accs.length > 0) { state.wallet = accs[0]; updateWalletUI(); }
+    }).catch(() => {});
+  }
+});
+</script>
+</body>
+</html>
